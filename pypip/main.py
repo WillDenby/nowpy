@@ -8,10 +8,11 @@ import ast
 import toml
 
 app = typer.Typer()
+venv_name = ".pypip"
 
 def detect_pypip_folder(venv_name, file_path):
     directory_containing_file = file_path.parent
-    pypip_folder = directory_containing_file / 'pypip'
+    pypip_folder = directory_containing_file / venv_name
     if pypip_folder.exists() and pypip_folder.is_dir():
         return True
     else:
@@ -79,7 +80,6 @@ def run_script(venv_name, file):
 
 @app.command(context_settings={"allow_extra_args": True, "ignore_unknown_options": True})
 def main(file: Path, ctx: typer.Context):
-    venv_name = ".pypip"
     if not detect_pypip_folder(venv_name, file):
         create_virtualenv(venv_name)
 
