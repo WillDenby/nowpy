@@ -82,17 +82,14 @@ def run_script(venv_name, file, args):
 
 @app.command(context_settings={"allow_extra_args": True, "ignore_unknown_options": True})
 def main(file: Path, ctx: typer.Context):
-
-    try:
-        run_script(venv_name, file, ctx.args)
-    except:
-        if not detect_pypip_folder(venv_name, file):
-            create_virtualenv(venv_name)
-            package_names = find_requirements_txt(file)
+    if not detect_pypip_folder(venv_name, file):
+        create_virtualenv(venv_name)
+        package_names = find_requirements_txt(file)
+        if len(package_names) == 0:
+            package_names = find_pyproject_toml(file)
             if len(package_names) == 0:
-                package_names = find_pyproject_toml(file)
-                if len(package_names) == 0:
-                    package_names = find_imports(file)
-            install_packages(venv_name, package_names)
-        run_script(venv_name, file, ctx.args)
+                package_names = find_imports(file)
+        install_packages(venv_name, package_names)
+
+    run_script(venv_name, file, ctx.args)
     
