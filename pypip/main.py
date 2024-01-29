@@ -73,7 +73,16 @@ def find_imports(file_path):
 
 def install_packages(venv_name, package_names):
     for package_name in package_names:
-        subprocess.run([os.path.join(venv_name, 'bin', 'pip'), 'install', '-q', package_name])
+        command = [os.path.join(venv_name, 'bin', 'pip'), 'install', '-q', package_name]
+        subprocess.run(' '.join(command) + ' 2>$(python -c "import os, sys; sys.stdout.write(os.devnull)")', shell=True)
+
+
+
+
+
+
+
+
 
 def run_script(venv_name, file):
     subprocess.run([os.path.join(venv_name, 'bin', 'python'), file])
@@ -91,5 +100,5 @@ def main(file: Path, ctx: typer.Context):
     install_packages(venv_name, package_names)
 
     run_script(venv_name, file)
-    return
+    print(ctx.args)
     
