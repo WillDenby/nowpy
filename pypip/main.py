@@ -72,33 +72,27 @@ def find_imports(file_path):
     return imports
 
 def install_packages(venv_name, package_names):
-    for package_name in package_names:
-        command = [os.path.join(venv_name, 'bin', 'pip'), 'install', '-q', package_name]
-        subprocess.run(' '.join(command) + ' 2>$(python -c "import os, sys; sys.stdout.write(os.devnull)")', shell=True)
+    with open(os.devnull, 'w') as devnull:
+        for package_name in package_names:
+            command = [os.path.join(venv_name, 'bin', 'pip'), 'install', package_name]
+            subprocess.run(command, stderr=devnull)
 
-
-
-
-
-
-
-
-
-def run_script(venv_name, file):
-    subprocess.run([os.path.join(venv_name, 'bin', 'python'), file])
+def run_script(venv_name, file, args):
+    subprocess.run([os.path.join(venv_name, 'bin', 'python'), file] + args)
 
 @app.command(context_settings={"allow_extra_args": True, "ignore_unknown_options": True})
 def main(file: Path, ctx: typer.Context):
-    if not detect_pypip_folder(venv_name, file):
-        create_virtualenv(venv_name)
 
-    package_names = find_requirements_txt(file)
-    if len(package_names) == 0:
-        package_names = find_pyproject_toml(file)
-        if len(package_names) == 0:
-            package_names = find_imports(file)
-    install_packages(venv_name, package_names)
-
-    run_script(venv_name, file)
-    print(ctx.args)
+    try:
+        run_script(venv_name, file, ctx.args)
+    except:
+        if not detect_pypip_folder(venv_name, file):
+            create_virtualenv(venv_name)
+            package_names = find_requirements_txt(file)
+            if len(package_names) == 0:
+                package_names = find_pyproject_toml(file)
+                if len(package_names) == 0:
+                    package_names = find_imports(file)
+            install_packages(venv_name, package_names)
+        run_script(venv_name, file, ctx.args)
     
