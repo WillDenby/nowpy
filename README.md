@@ -1,14 +1,14 @@
-# PyPip - Run any Python File **Instantly**, Without Any Setup.
+# pypip - Run Any Python File **Instantly** Without Setup
 
 ![PyPipDemo](https://files.datasesa.me/PyPipDemo.gif)
 
-**PyPip** combines ```python```, ```virtualenv```, and ```pip``` to launch a dedicated isolated environment, automatically figure out which packages are required, and then run your Python file - all with just **one** command. 
+**pypip** combines ```python```, ```virtualenv```, and ```pip``` to launch a dedicated isolated environment, automatically figure out which packages are required, and then run your Python file - all with just **one** command. 
 
-**PyPip** finds packages by performing a recursive lookup for a ```pyproject.toml``` OR a ```requirements.txt```, and cross-checks with parsing any ```import``` statements inside the **Python** file. 
+**pypip** finds packages by performing a recursive lookup for a ```pyproject.toml``` OR a ```requirements.txt```, and cross-checks with parsing any ```import``` statements inside the **Python** file. 
 
 ## Installation
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install **PyPip**.
+Use the package manager [pip](https://pip.pypa.io/en/stable/) to install **pypip**.
 
 ```bash
 pip install pypip
@@ -18,7 +18,7 @@ It might be the last time you have to ```pip install`` anything!
 
 ## Usage
 
-Here's an example of what happens if you run **PyPip** on a Python file (that just imports ```requsts```) for the first time:
+Here's an example of what happens if you run **pypip** on a Python file (that just imports ```requsts```) for the first time:
 
 ```bash
 pypip WorldTimeApi.py
@@ -47,7 +47,7 @@ Date: 2024-01-30T22:08:52.854140+00:00
 Timezone: Europe/London
 ```
 
-**PyPip** creates a unique virtual environment for every directory you run ```pypip``` from. It also removes unused ones automatically. But if you ever want to reset a particular one that you're using, just use the ```--reset``` option:
+**pypip** creates a unique virtual environment for every directory you run ```pypip``` from. It also removes unused ones automatically. But if you ever want to reset a particular one that you're using, just use the ```--reset``` option:
 
 ```bash
 pypip --reset
