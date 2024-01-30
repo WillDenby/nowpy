@@ -9,8 +9,6 @@ from hashlib import sha256
 from typing_extensions import Annotated, Optional
 import random
 import shutil
-import re
-
 
 app = typer.Typer()
 
@@ -139,11 +137,16 @@ def reset_callback(value: bool):
         if not packages == []:
             subprocess.run([os.path.join(venv_path, 'bin', 'pip'), "uninstall", "-y"] + packages, check=True)
         raise typer.Exit()
-    
+
+def version_callback(value: bool):
+    if value:
+        print("PyPip 0.1.0")
+        raise typer.Exit()
 @app.command(context_settings={"allow_extra_args": True, "ignore_unknown_options": True})
 def main(file: Path, 
          ctx: typer.Context,
-         reset: Annotated[Optional[bool], typer.Option("--reset", callback=reset_callback)] = None,):
+         reset: Annotated[Optional[bool], typer.Option("--reset", callback=reset_callback)] = None,
+         version: Annotated[Optional[bool], typer.Option("--version", callback=version_callback, is_eager=True)] = None):
 
     venv_path = find_venv()
     if not os.path.exists(venv_path):
