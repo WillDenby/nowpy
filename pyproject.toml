@@ -2,8 +2,10 @@
 name = "pypip"
 version = "0.1.0"
 description = "Run any Python file instantly, with just one command"
+license = "MIT"
 authors = ["WillDenby <119456795+WillDenby@users.noreply.github.com>"]
 readme = "README.md"
+repository = "https://github.com/WillDenby/pypip"
 
 [tool.poetry.dependencies]
 python = "^3.9"
