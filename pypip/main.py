@@ -31,7 +31,6 @@ def find_requirements_txt(file_in):
                         required_packages.add(package)
             break  # Stop searching once requirements.txt is found
         current_dir = os.path.dirname(current_dir)  # Move to the parent directory
-    print("Requirement.txt packages: ", required_packages)
     return required_packages
 
 def find_pyproject_toml(file_in):
@@ -51,7 +50,6 @@ def find_pyproject_toml(file_in):
     
     return required_packages  # Return the list of required packages
 
-
 def find_imports(file_in):
     imports = set()
     with open(file_in, 'r') as file:
@@ -62,8 +60,7 @@ def find_imports(file_in):
                     imports.add(alias.name.split('.')[0])  # Take only the master package
             elif isinstance(node, ast.ImportFrom):
                 if node.module is not None:
-                    imports.add(node.module.split('.')[0])  # Take only the master package
-    print("Import statement packages: ", imports)                    
+                    imports.add(node.module.split('.')[0])  # Take only the master package                  
     return imports
 
 def find_required_packages(file_in):
@@ -77,15 +74,12 @@ def find_required_packages(file_in):
         unversioned_requirements_packages.add(package_name)
     required_packages -= required_packages.intersection(unversioned_requirements_packages)
     required_packages.update(requirements_packages)
-    print("Neutralised set of all the packages :", required_packages )
     return required_packages
 
 def find_existing_packages(venv_path):
     result = subprocess.run([os.path.join(venv_path, 'bin', 'pip'), 'freeze'], capture_output=True, text=True)
     existing_packages = set(result.stdout.strip().split('\n'))
     return existing_packages
-
-
 
 def install_packages(venv_path, missing_packages):
     with open(os.devnull, 'w') as devnull:
@@ -117,9 +111,7 @@ def main(file: Path,
         
     required_packages = find_required_packages(file)
     existing_packages = find_existing_packages(venv_path)
-    print("Existing packages :", existing_packages)
     missing_packages = required_packages - existing_packages  
-    print("Missing packages :", missing_packages)
     install_packages(venv_path, missing_packages)
     run_script(venv_path, file, ctx.args)
     
