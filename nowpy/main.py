@@ -15,8 +15,8 @@ app = typer.Typer()
 def find_venv():
     cwd_hash = sha256(str(Path.cwd()).encode()).hexdigest()
     venv_name = "venv_" + cwd_hash[:8]
-    pypip_folder_path = Path.home() / ".pypip"
-    venv_path = str(pypip_folder_path / venv_name)
+    nowpy_folder_path = Path.home() / ".nowpy"
+    venv_path = str(nowpy_folder_path / venv_name)
     return venv_path
 
 def find_requirements_txt(file_in):
@@ -109,15 +109,15 @@ def install_packages(venv_path, missing_packages):
 def run_script(venv_path, file_in, args):
     subprocess.run([os.path.join(venv_path, 'bin', 'python'), file_in] + args)
 
-def clean_pypip_directory():
+def clean_nowpy_directory():
     cwd_hash = sha256(str(Path.cwd()).encode()).hexdigest()
     venv_name = "venv_" + cwd_hash[:8]
 
-    pypip_folder_path = Path.home() / ".pypip"
-    if not pypip_folder_path.exists():
+    nowpy_folder_path = Path.home() / ".nowpy"
+    if not nowpy_folder_path.exists():
         return
 
-    folders = [item for item in pypip_folder_path.iterdir() if item.is_dir()]
+    folders = [item for item in nowpy_folder_path.iterdir() if item.is_dir()]
     if len(folders) <= 10:
         return
 
@@ -131,7 +131,7 @@ def clean_pypip_directory():
 
 def reset_callback(value: bool):
     if value:
-        print(f"Resetting the PyPip Virtual Environment...")
+        print(f"Resetting the nowpy Virtual Environment...")
         venv_path = find_venv()
         packages =  subprocess.run([os.path.join(venv_path, 'bin', 'pip'), "freeze"], capture_output=True, text=True).stdout.split()
         if not packages == []:
@@ -140,7 +140,7 @@ def reset_callback(value: bool):
 
 def version_callback(value: bool):
     if value:
-        print("PyPip 0.1.0")
+        print("nowpy 0.1.0")
         raise typer.Exit()
 @app.command(context_settings={"allow_extra_args": True, "ignore_unknown_options": True})
 def main(file: Path, 
@@ -153,7 +153,7 @@ def main(file: Path,
         print("Creating Virtualenv...")
         subprocess.run([sys.executable, '-m', 'virtualenv', '-q', venv_path])
     
-    clean_pypip_directory()
+    clean_nowpy_directory()
 
     required_packages = find_required_packages(file)
     existing_packages = find_existing_packages(venv_path)
