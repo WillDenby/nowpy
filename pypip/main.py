@@ -7,9 +7,7 @@ import ast
 import toml
 from hashlib import sha256
 from typing_extensions import Annotated, Optional
-from packaging.requirements import Requirement
-from packaging.version import Version
-from packaging.specifiers import SpecifierSet
+
 
 app = typer.Typer()
 
@@ -36,12 +34,6 @@ def find_requirements_txt(file_in):
     print("Requirement.txt packages: ", required_packages)
     return required_packages
 
-def find_latest_compatible_version(package, version):
-    req = Requirement(package + version)
-    specifier = SpecifierSet(','.join(map(str, req.specifier))) if req.specifier else None
-    latest_version = max(Version(p.version) for p in req.specifier.filter(Version))
-    return str(latest_version) if not specifier or latest_version in specifier else None
-
 def find_pyproject_toml(file_in):
     required_packages = set()  # Using a set to avoid duplicate entries
     current_dir = os.path.dirname(os.path.abspath(file_in))
@@ -51,15 +43,14 @@ def find_pyproject_toml(file_in):
             with open(pyproject_toml_file, 'r') as f:
                 pyproject_toml_data = toml.load(f)
                 # Extract dependencies from the 'tool.poetry.dependencies' section
-                dependencies = pyproject_toml_data.get('tool', {}).get('poetry', {}).get('dependencies', {})
-                for package, version in dependencies.items():
-                    updated_version = find_latest_compatible_version(package, version)
-                    if updated_version:
-                        required_packages.add(f"{package}=={updated_version}")
-
+            dependencies = pyproject_toml_data.get('tool', {}).get('poetry', {}).get('dependencies', {})
+            for package, version in dependencies.items():
+                version = version.lstrip('^')
+                required_packages.add(f"{package}=={version}")
         current_dir = os.path.dirname(current_dir)  # Move to the parent directory
-    print("Pyproject.toml packages: ", required_packages)
-    return required_packages
+    
+    return required_packages  # Return the list of required packages
+
 
 def find_imports(file_in):
     imports = set()
