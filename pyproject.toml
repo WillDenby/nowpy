@@ -2,7 +2,7 @@
 name = "pypip"
 version = "0.1.0"
 description = ""
-authors = ["DonkeyBoard <119456795+WillDenby@users.noreply.github.com>"]
+authors = ["WillDenby <119456795+WillDenby@users.noreply.github.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]

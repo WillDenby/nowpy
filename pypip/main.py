@@ -150,7 +150,8 @@ def main(file: Path,
 
     venv_path = find_venv()
     if not os.path.exists(venv_path):
-        subprocess.run([sys.executable, '-m', 'virtualenv', venv_path])
+        print("Creating Virtualenv...")
+        subprocess.run([sys.executable, '-m', 'virtualenv', '-q', venv_path])
     
     clean_pypip_directory()
 
@@ -161,5 +162,7 @@ def main(file: Path,
     missing_packages.update(missing_imports)
 
     install_packages(venv_path, missing_packages)
+    print("Running Script...")
+    print("")
     run_script(venv_path, file, ctx.args)
     
