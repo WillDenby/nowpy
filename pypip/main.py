@@ -7,6 +7,9 @@ import ast
 import toml
 from hashlib import sha256
 from typing_extensions import Annotated, Optional
+import random
+import shutil
+import re
 
 
 app = typer.Typer()
@@ -50,23 +53,8 @@ def find_pyproject_toml(file_in):
     
     return required_packages  # Return the list of required packages
 
-def find_imports(file_in):
-    imports = set()
-    with open(file_in, 'r') as file:
-        tree = ast.parse(file.read(), filename=file_in)
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Import):
-                for alias in node.names:
-                    imports.add(alias.name.split('.')[0])  # Take only the master package
-            elif isinstance(node, ast.ImportFrom):
-                if node.module is not None:
-                    imports.add(node.module.split('.')[0])  # Take only the master package                  
-    return imports
-
 def find_required_packages(file_in):
     required_packages = set()
-    imports = find_imports(file_in)
-    required_packages.update(imports)
     requirements_packages = find_requirements_txt(file_in) or find_pyproject_toml(file_in)
     unversioned_requirements_packages = set()
     for item in requirements_packages:
@@ -81,6 +69,39 @@ def find_existing_packages(venv_path):
     existing_packages = set(result.stdout.strip().split('\n'))
     return existing_packages
 
+def find_imports(file_in):
+    imports = set()
+    with open(file_in, 'r') as file:
+        tree = ast.parse(file.read(), filename=file_in)
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                for alias in node.names:
+                    imports.add(alias.name.split('.')[0])  # Take only the master package
+            elif isinstance(node, ast.ImportFrom):
+                if node.module is not None:
+                    imports.add(node.module.split('.')[0])  # Take only the master package                  
+    return imports
+
+def find_missing_imports(file_in, required_packages, existing_packages):
+    missing_imports = set()
+    imports = find_imports(file_in)
+
+    unversioned_required_packages = set()
+    for item in required_packages:
+        package_name = item.split("==")[0]
+        unversioned_required_packages.add(package_name)
+
+    unversioned_existing_packages = set()
+    for item in existing_packages:
+        package_name = item.split("==")[0]
+        unversioned_existing_packages.add(package_name)
+
+    for item in imports:
+        if item not in unversioned_required_packages:
+            if item not in unversioned_existing_packages:
+                missing_imports.add(item)
+    return missing_imports
+
 def install_packages(venv_path, missing_packages):
     with open(os.devnull, 'w') as devnull:
         for pkg in missing_packages:
@@ -89,6 +110,26 @@ def install_packages(venv_path, missing_packages):
 
 def run_script(venv_path, file_in, args):
     subprocess.run([os.path.join(venv_path, 'bin', 'python'), file_in] + args)
+
+def clean_pypip_directory():
+    cwd_hash = sha256(str(Path.cwd()).encode()).hexdigest()
+    venv_name = "venv_" + cwd_hash[:8]
+
+    pypip_folder_path = Path.home() / ".pypip"
+    if not pypip_folder_path.exists():
+        return
+
+    folders = [item for item in pypip_folder_path.iterdir() if item.is_dir()]
+    if len(folders) <= 10:
+        return
+
+    folders_to_delete = random.sample(folders, len(folders) - 10)
+    for folder_to_delete in folders_to_delete:
+        if not folder_to_delete.name == venv_name:
+            try:
+                shutil.rmtree(folder_to_delete)
+            except Exception as e:
+                pass
 
 def reset_callback(value: bool):
     if value:
@@ -103,15 +144,19 @@ def reset_callback(value: bool):
 def main(file: Path, 
          ctx: typer.Context,
          reset: Annotated[Optional[bool], typer.Option("--reset", callback=reset_callback)] = None,):
-    # Find the venv hash
-    venv_path = find_venv()
 
+    venv_path = find_venv()
     if not os.path.exists(venv_path):
         subprocess.run([sys.executable, '-m', 'virtualenv', venv_path])
-        
+    
+    clean_pypip_directory()
+
     required_packages = find_required_packages(file)
     existing_packages = find_existing_packages(venv_path)
-    missing_packages = required_packages - existing_packages  
+    missing_imports = find_missing_imports(file, required_packages, existing_packages)
+    missing_packages = required_packages - existing_packages
+    missing_packages.update(missing_imports)
+
     install_packages(venv_path, missing_packages)
     run_script(venv_path, file, ctx.args)
     
