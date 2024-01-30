@@ -14,11 +14,13 @@ Use the package manager [pip](https://pip.pypa.io/en/stable/) to install **pypip
 pip install pypip
 ```
 
-It might be the last time you have to ```pip install`` anything!
+It might be the last time you have to ```pip install``` anything!
 
 ## Usage
 
-Here's an example of what happens if you run **pypip** on a Python file (that just imports ```requsts```) for the first time:
+Here's an example of what happens if you run **pypip** on a Python file that imports ```requsts```. 
+
+First run:
 
 ```bash
 pypip WorldTimeApi.py
@@ -35,7 +37,7 @@ Date: 2024-01-30T22:08:52.854140+00:00
 Timezone: Europe/London
 ```
 
-Next time:
+All future runs:
 
 ```bash
 pypip WorldTimeApi.py
