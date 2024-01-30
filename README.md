@@ -1,4 +1,4 @@
-# pypip - Run Any Python File **Instantly** Without Setup
+# pypip - Run Any Python File **Instantly**
 
 ![PyPipDemo](https://files.datasesa.me/PyPipDemo.gif)
 
