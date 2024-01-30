@@ -4,7 +4,7 @@
 
 **pypip** combines ```python```, ```virtualenv```, and ```pip``` to launch a dedicated isolated environment, automatically figure out which packages are required, and then run your Python file - all with just **one** command. 
 
-**pypip** finds packages by performing a recursive lookup for a ```pyproject.toml``` OR a ```requirements.txt```, and cross-checks with parsing any ```import``` statements inside the **Python** file. 
+**pypip** finds packages by performing a recursive lookup for a ```pyproject.toml``` OR a ```requirements.txt```, and cross-checks with any ```import``` statements inside the **Python** file. 
 
 ## Installation
 
