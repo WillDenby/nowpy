@@ -1,4 +1,3 @@
-import pythonads
 import typer
 import sys
 import os
