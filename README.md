@@ -8,13 +8,14 @@
 
 ## Installation
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install **nowpy**.
+You can use the package manager [pip](https://pip.pypa.io/en/stable/) to install **nowpy**. (It might be the last time you have to ```pip install``` anything!)
 
 ```bash
 pip install nowpy
-```
 
-It might be the last time you have to ```pip install``` anything!
+# Even better
+pipx install nowpy
+```
 
 ## Usage
 
