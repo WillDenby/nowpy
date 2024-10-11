@@ -146,7 +146,6 @@ def install_packages(venv_path: str, missing_packages: set) -> None:
             command = [os.path.join(venv_path, "bin", "pip"), "install"] + list(
                 missing_packages
             )
-            print(command)
             subprocess.run(command, stderr=devnull)
 
 
