@@ -381,7 +381,7 @@ def reset_callback(value: bool) -> None:
 
 def version_callback(value: bool) -> None:
     if value:
-        print("nowpy 0.1.4")
+        print("nowpy 0.1.5.post1")
         raise typer.Exit()
 
 
