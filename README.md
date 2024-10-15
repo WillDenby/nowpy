@@ -4,8 +4,7 @@
 
 **nowpy** finds packages by performing a recursive lookup for a `requirements.txt` or a Poetry-flavoured `pyproject.toml`, and cross-checks with any `import` statements inside the Python file. 
 
-[!NOTE] 
-**nowpy** won't find a packages if its `import xyz` name is different to that on PyPI. 
+**Note**: **nowpy** won't find a packages if its `import xyz` name is different to that on PyPI. 
 
 ## Installation
 
@@ -50,24 +49,18 @@ Date: 2024-01-30T22:08:52.854140+00:00
 Timezone: Europe/London
 ```
 
-**nowpy** creates a unique virtual environment for every directory you run `nowpy` from. It also removes unused ones automatically. But if you ever want to reset the virtual environment in a directory that you're using, just use the `--reset` option:
+**nowpy** creates a unique virtual environment for every directory you run `nowpy` from. It also removes unused ones automatically over time (only five ever exist). But if you ever want to reset the virtual environment in a directory that you're using, just use the `--reset` option:
 
 ```sh
 nowpy --reset
 ```
 
 That's all!
-
+ 
 ## Roadmap
 
-- Stop **nowpy** from trying to treat "batteries included" imports (e.g. `import os`) as packages to be imported from PyPI. 
+- Include substitution reconciliation for common packages whose PyPI name is different to their `import` name. E.g. `pip install scikit-learn` -> `import sklearn`. 
 - Enable **nowpy** to find packages required by generic `pyproject.toml` files, not just "Poetry-flavoured" ones. 
-- Allow **nowpy** to trace local imports.
-- Make the venv clean operation simpler
-
-## Contributing
-
-Pull requests are welcome.
 
 ## License
 

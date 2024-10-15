@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nowpy"
-version = "0.1.4"
+version = "0.1.5"
 description = "Run any Python file instantly, with just one command"
 license = "MIT"
 authors = ["WillDenby <119456795+WillDenby@users.noreply.github.com>"]

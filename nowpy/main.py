@@ -1,5 +1,3 @@
-# TODO make sure that Python==XXX is removed from packages to install
-
 """A CLI tool for running Python scripts - hassle-free"""
 
 # Standard library imports
@@ -21,6 +19,38 @@ from typeguard import typechecked
 
 app = typer.Typer()
 
+BUILTINS = {
+    "__future__", "__main__", "_thread", "_tkinter",
+    "abc", "argparse", "array", "ast", "asyncio", "atexit",
+    "base64", "bdb", "binascii", "bisect", "builtins", "bz2",
+    "calendar", "cmath", "cmd", "code", "codecs", "codeop",
+    "collections", "colorsys", "compileall", "concurrent",
+    "configparser", "contextlib", "contextvars", "copy", "copyreg", "cProfile", 
+    "csv", "ctypes", "curses", "dataclasses", "datetime", "dbm", "decimal", 
+    "difflib", "dis", "doctest", "email", "encodings", "ensurepip", "enum", 
+    "errno", "faulthandler", "fcntl", "filecmp", "fileinput", "fnmatch", 
+    "fractions", "ftplib", "functools", "gc", "getopt", "getpass", "gettext", 
+    "glob", "graphlib", "grp", "gzip", "hashlib", "heapq", "hmac", "html", 
+    "http", "idlelib", "imaplib", "importlib", "inspect", "io", "ipaddress", 
+    "itertools", "json", "keyword", "linecache", "locale", "logging", "lzma", 
+    "mailbox", "marshal", "math", "mimetypes", "mmap", "modulefinder", 
+    "msvcrt", "multiprocessing", "netrc", "numbers", "operator", "optparse", 
+    "os", "pathlib", "pdb", "pickle", "pickletools", "pkgutil", "platform", 
+    "plistlib", "poplib", "posix", "pprint", "profile", "pstats", "pty", 
+    "pwd", "py_compile", "pyclbr", "pydoc", "queue", "quopri", "random", 
+    "re", "readline", "reprlib", "resource", "rlcompleter", "runpy", "sched", 
+    "secrets", "select", "selectors", "shelve", "shlex", "shutil", "signal", 
+    "site", "sitecustomize", "smtplib", "socket", "socketserver", "sqlite3", 
+    "ssl", "stat", "statistics", "string", "stringprep", "struct", 
+    "subprocess", "symtable", "sys", "sysconfig", "syslog", "tabnanny", 
+    "tarfile", "tempfile", "termios", "test", "textwrap", "threading", "time", 
+    "timeit", "tkinter", "token", "tokenize", "tomllib", "trace", 
+    "traceback", "tracemalloc", "tty", "turtle", "turtledemo", "types", 
+    "typing", "unicodedata", "unittest", "urllib", "usercustomize", "uuid", 
+    "venv", "warnings", "wave", "weakref", "webbrowser", "winreg", 
+    "winsound", "wsgiref", "xml", "xmlrpc", "zipapp", "zipfile", "zipimport", 
+    "zlib", "zoneinfo"
+}
 
 # Computes what the venv name for a given directory should be, based on its hash.
 @typechecked
@@ -138,7 +168,6 @@ def find_missing_imports(
                 missing_imports.add(item)
     return missing_imports
 
-
 @typechecked
 def install_packages(venv_path: str, missing_packages: set) -> None:
     with open(os.devnull, "w") as devnull:
@@ -232,7 +261,7 @@ def main(
         missing_imports
     )  # Adds any which are found via import statements
     missing_packages = {
-        pkg for pkg in missing_packages if not pkg.startswith("python=")
+        pkg for pkg in missing_packages if not pkg.startswith("python=") and pkg not in BUILTINS
     }
     install_packages(venv_path, missing_packages)  # Hassle-free!
     print("Running Script...")
