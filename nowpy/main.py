@@ -307,6 +307,7 @@ def find_imports(file_in: Path) -> set:
 # Version requirements can exist in requirements.txt/pyproject.toml, hence they take primacy.
 @typechecked
 def find_missing_imports(
+    # TODO: if same dependency in requirements.txt and import, it prints "Requirement already satisfied", which suggests pip is attempting to install it.
     file_in: Path, required_packages: set, existing_packages: set[str]
 ) -> set:
     missing_imports = set()
