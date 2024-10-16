@@ -4,7 +4,7 @@
 
 **nowpy** finds packages by performing a recursive lookup for a `requirements.txt` or a Poetry-flavoured `pyproject.toml`, and cross-checks with any `import` statements inside the Python file. 
 
-**Note**: **nowpy** won't find a packages if its `import xyz` name is different to that on PyPI. 
+**Note**: **nowpy** should find many common packages whose `import` names don't match their PyPI distribution names, such as `import sklearn` -> `pip install scikit-learn`, but the hardcoded list of substitutions is definitely not exhaustive. 
 
 ## Installation
 
@@ -59,7 +59,6 @@ That's all!
  
 ## Roadmap
 
-- Include substitution reconciliation for common packages whose PyPI name is different to their `import` name. E.g. `pip install scikit-learn` -> `import sklearn`. 
 - Enable **nowpy** to find packages required by generic `pyproject.toml` files, not just "Poetry-flavoured" ones. 
 
 ## License

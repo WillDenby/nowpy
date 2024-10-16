@@ -208,6 +208,21 @@ BUILTINS = {
     "zoneinfo",
 }
 
+IMPORT_MISMATCH = {
+    "cv2": "opencv-python",
+    "PIL": "Pillow",
+    "sklearn": "scikit-learn",
+    "skimage": "scikit-image",
+    "bs4": "beautifulsoup4",
+    "serial": "pyserial",
+    "usb": "pyusb",
+    "yaml": "pyyaml",
+    "dateutil": "python-dateutil",
+    "matlab": "matlabengine",
+    "OpenSSL": "pyOpenSSL",
+    "ffmpeg": "python-ffmpeg",
+}
+
 
 # Computes what the venv name for a given directory should be, based on its hash.
 @typechecked
@@ -296,10 +311,12 @@ def find_imports(file_in: Path) -> set:
         for node in ast.walk(tree):
             if isinstance(node, ast.Import):
                 for alias in node.names:
-                    imports.add(alias.name.split(".")[0])
+                    module_name = alias.name.split(".")[0]
+                    imports.add(IMPORT_MISMATCH.get(module_name, module_name))
             elif isinstance(node, ast.ImportFrom):
                 if node.module is not None:
-                    imports.add(node.module.split(".")[0])
+                    module_name = node.module.split(".")[0]
+                    imports.add(IMPORT_MISMATCH.get(module_name, module_name))
     return imports
 
 
@@ -307,8 +324,9 @@ def find_imports(file_in: Path) -> set:
 # Version requirements can exist in requirements.txt/pyproject.toml, hence they take primacy.
 @typechecked
 def find_missing_imports(
-    # TODO: if same dependency in requirements.txt and import, it prints "Requirement already satisfied", which suggests pip is attempting to install it.
-    file_in: Path, required_packages: set, existing_packages: set[str]
+    file_in: Path,
+    required_packages: set,
+    existing_packages: set[str],
 ) -> set:
     missing_imports = set()
     imports = find_imports(file_in)
@@ -331,7 +349,7 @@ def find_missing_imports(
 def install_packages(venv_path: str, missing_packages: set) -> None:
     with open(os.devnull, "w") as devnull:
         if missing_packages:
-            command = [os.path.join(venv_path, "bin", "pip"), "install"] + list(
+            command = [os.path.join(venv_path, "bin", "pip"), "install", "-q"] + list(
                 missing_packages
             )
             subprocess.run(command, stderr=devnull)
@@ -381,7 +399,7 @@ def reset_callback(value: bool) -> None:
 
 def version_callback(value: bool) -> None:
     if value:
-        print("nowpy 0.1.5.post1")
+        print("nowpy 0.1.6")
         raise typer.Exit()
 
 
