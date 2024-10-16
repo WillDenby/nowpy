@@ -382,7 +382,7 @@ def clean_nowpy_directory() -> None:
 
 def reset_callback(value: bool) -> None:
     if value:
-        print("Resetting venv...")
+        print("Resetting Venv...")
         venv_path = find_venv()
         packages = subprocess.run(
             [os.path.join(venv_path, "bin", "pip"), "freeze"],
@@ -407,7 +407,7 @@ def version_callback(value: bool) -> None:
     context_settings={"allow_extra_args": True, "ignore_unknown_options": True}
 )
 def main(
-    file: Path,
+    file: Annotated[Path, typer.Argument(exists=True, dir_okay=False)],
     ctx: typer.Context,
     reset: Annotated[
         Optional[bool], typer.Option("--reset", callback=reset_callback)
@@ -419,7 +419,7 @@ def main(
 ):
     venv_path = find_venv()
     if not os.path.exists(venv_path):
-        print("Creating venv...")
+        print("Creating Venv...")
         subprocess.run([sys.executable, "-m", "virtualenv", "-q", venv_path])
     clean_nowpy_directory()  # Stops nowpy venvs building up over time
     required_packages = find_required_packages(
@@ -442,6 +442,8 @@ def main(
         for pkg in missing_packages
         if not pkg.startswith("python=") and pkg not in BUILTINS
     }
+    if missing_packages:
+        print("Installing Packages...")
     install_packages(venv_path, missing_packages)  # Hassle-free!
     print("Running Script...")
     print("")
